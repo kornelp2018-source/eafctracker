@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA FC 27 Tracker - Horror Edition</title>
+    <link rel="apple-touch-icon" href="https://i.imgur.com/8vJcW2z.png">
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #030305;
+            color: #f4f4f5;
+            background-image: 
+                radial-gradient(circle at 50% 15%, rgba(249, 115, 22, 0.2) 0%, transparent 65%),
+                radial-gradient(circle at 10% 85%, rgba(74, 222, 128, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 90% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23030305' stop-opacity='0.1'/%3E%3Cstop offset='100%25' stop-color='%23030305' stop-opacity='0.95'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='%23f97316' opacity='0.18'%3E%3Cpath d='M30,180 L80,180 L80,240 L30,240 Z M20,200 L30,200 L30,220 L20,220 Z M80,200 L90,200 L90,220 L80,220 Z M40,220 L70,220 L70,225 L40,225 Z M42,195 L52,195 M58,195 L68,195' stroke='%23f97316' stroke-width='3'/%3E%3Cpath d='M930,160 Q950,110 970,160 Q985,220 970,270 Q950,290 930,270 Q915,220 930,160 Z M935,175 Q942,190 940,205 Q932,190 935,175 Z M960,175 Q968,190 965,205 Q958,190 960,175 Z M943,225 Q950,260 957,225 Z' fill='%23a855f7' opacity='0.25'/%3E%3Cpath d='M25,500 Q45,490 65,500 L58,525 L50,502 L42,525 Z' fill='%23ef4444' opacity='0.3'/%3E%3Cpath d='M935,500 Q955,490 975,500 L968,525 L960,502 L952,525 Z' fill='%23ef4444' opacity='0.3'/%3E%3C/g%3E%3Cg stroke='%23f97316' stroke-width='0.7' opacity='0.35' fill='none'%3E%3Cpath d='M0,0 L250,250 M0,80 L180,180 M0,160 L120,240 M80,0 L180,180 M160,0 L240,120 M0,250 Q120,120 250,0 M0,180 Q90,90 180,0 M0,120 Q60,60 120,0 M0,60 Q30,30 60,0'/%3E%3Cline x1='150' y1='150' x2='150' y2='230' stroke='%234ade80' stroke-width='1'/%3E%3Ccircle cx='150' cy='235' r='5' fill='%234ade80'/%3E%3Cpath d='M145,232 L138,225 M145,235 L136,235 M145,238 L138,245 M155,232 L162,225 M155,235 L164,235 M155,238 L162,245' stroke='%234ade80' stroke-width='1.5'/%3E%3Cpath d='M1000,0 L750,250 M1000,80 L820,180 M1000,160 L880,240 M920,0 L820,180 M840,0 L760,120 M1000,250 Q880,120 750,0 M1000,180 Q910,90 820,0 M1000,120 Q940,60 880,0'/%3E%3Cline x1='830' y1='170' x2='830' y2='260' stroke='%23f97316' stroke-width='1'/%3E%3Ccircle cx='830' cy='265' r='6' fill='%23f97316'/%3E%3Cpath d='M825,262 L818,255 M825,265 L816,265 M825,268 L818,275 M835,262 L842,255 M835,265 L844,265 M835,268 L842,275' stroke='%23f97316' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .spooky-card {
+            background: linear-gradient(145deg, rgba(18, 18, 24, 0.96) 0%, rgba(6, 6, 9, 0.98) 100%);
+            border: 1px solid rgba(249, 115, 22, 0.45);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(249, 115, 22, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spooky-card::before {
+            content: "🕸️";
+            position: absolute;
+            top: -6px;
+            right: -4px;
+            font-size: 20px;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .spooky-card::after {
+            content: "🕷️";
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            font-size: 12px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .pitch-bg {
+            background: #09170b;
+            background-image: 
+                radial-gradient(circle at center, rgba(74, 222, 128, 0.22) 0%, transparent 75%),
+                linear-gradient(to bottom, rgba(249, 115, 22, 0.18) 1px, transparent 1px),
+                linear-gradient(to right, rgba(74, 222, 128, 0.12) 50%, transparent 50%);
+            background-size: 100% 100%, 100% 40px, 100% 100%;
+        }
+
+        .spooky-glow-orange {
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+
+        .spooky-glow-green {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        @keyframes floatMonster {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(4deg); }
+        }
+
+        .monster-anim {
+            display: inline-block;
+            animation: floatMonster 3.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="root"></div>
+    <script type="text/babel">
+        const FORMATIONS = {
+            '4-3-3 (1)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'CM1', top: '45%', left: '28%' }, { pos: 'CM', top: '50%', left: '50%' }, { pos: 'CM2', top: '45%', left: '72%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (2) (Płaski)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'CM1', top: '42%', left: '30%' }, { pos: 'CM2', top: '42%', left: '70%' }, { pos: 'CDM', top: '56%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (3) (Trójkąt)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'CAM', top: '35%', left: '50%' }, { pos: 'CDM1', top: '52%', left: '35%' }, { pos: 'CDM2', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-4-2 (Klasyczna)': [
+                { pos: 'ST1', top: '16%', left: '35%' }, { pos: 'ST2', top: '16%', left: '65%' },
+                { pos: 'LM', top: '42%', left: '15%' }, { pos: 'CM1', top: '46%', left: '38%' }, { pos: 'CM2', top: '46%', left: '62%' }, { pos: 'RM', top: '42%', left: '85%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-3-1 (Wąsko)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'CAM1', top: '28%', left: '24%' }, { pos: 'CAM', top: '30%', left: '50%' }, { pos: 'CAM2', top: '28%', left: '76%' },
+                { pos: 'CDM1', top: '52%', left: '35%' }, { pos: 'CDM2', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ]
+        };
+
+        const BENCH_POSITIONS = ['SUB 1', 'SUB 2', 'SUB 3', 'SUB 4', 'SUB 5', 'SUB 6', 'SUB 7'];
+        const ROMAN_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII'];
+
+        const safeNum = (val) => isNaN(Number(val)) ? 0 : Number(val);
+
+        const getDivisionStagesCount = (div) => {
+            if (div === 'Elite') return 0;
+            const d = safeNum(div);
+            if (d >= 8) return 10;
+            if (d >= 6) return 11;
+            if (d >= 3) return 12;
+            return 13;
+        };
+
+        const getStagesList = (maxCount) => {
+            const stages = [];
+            for (let i = 1; i <= maxCount; i++) {
+                const isCP = (i === 1 || i === 4 || i === 7 || i === 10 || i === maxCount);
+                stages.push({ id: i, label: ROMAN_NUMERALS[i - 1], isCheckpoint: isCP });
+            }
+            return stages;
+        };
+
+        function App() {
+            const [tab, setTab] = React.useState('squad');
+            
+            const [matches, setMatches] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_matches')) || []);
+            
+            const [rivals, setRivals] = React.useState(() => {
+                const data = JSON.parse(localStorage.getItem('eafc27_rivals'));
+                return { 
+                    division: 10, 
+                    currentStage: 1, 
+                    weeklyPoints: 0, 
+                    winStreak: 0, 
+                    wins: 0, 
+                    draws: 0, 
+                    losses: 0,
+                    history: [],
+                    ...(data || {})
+                };
+            });
+
+            const [fut, setFut] = React.useState(() => {
+                const data = JSON.parse(localStorage.getItem('eafc27_fut'));
+                return { 
+                    currentWeek: 1, 
+                    wins: 0, 
+                    losses: 0, 
+                    mvp: '', 
+                    weeksHistory: [],
+                    matches: [],
+                    ...(data || {})
+                };
+            });
+
+            const [formation, setFormation] = React.useState(() => localStorage.getItem('eafc27_formation') || '4-3-3 (1)');
+            const [squad, setSquad] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_squad')) || {});
+            const [bench, setBench] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_bench')) || {});
+            const [legends, setLegends] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_legends')) || []);
+
+            const [selectedPos, setSelectedPos] = React.useState(null);
+            const [isBenchSelection, setIsBenchSelection] = React.useState(false);
+            
+            const [editingSquadPlayerKey, setEditingSquadPlayerKey] = React.useState(null);
+            const [squadPlayerStats, setSquadPlayerStats] = React.useState({ goals: 0, assists: 0, yellowCards: 0, redCards: 0 });
+
+            const [playerName, setPlayerName] = React.useState('');
+            const [playerPosField, setPlayerPosField] = React.useState('');
+            const [playerOvr, setPlayerOvr] = React.useState('');
+            const [playerCardType, setPlayerCardType] = React.useState('Złota');
+            const [playerMatchesCount, setPlayerMatchesCount] = React.useState('');
+            const [playerGoalsCount, setPlayerGoalsCount] = React.useState('');
+            const [playerAssistsCount, setPlayerAssistsCount] = React.useState('');
+            const [playerPhoto, setPlayerPhoto] = React.useState('');
+
+            const [gfGoals, setGfGoals] = React.useState('');
+            const [gaGoals, setGaGoals] = React.useState('');
+            const [matchScorers, setMatchScorers] = React.useState([]);
+            const [currentScorer, setCurrentScorer] = React.useState('');
+            const [currentMinute, setCurrentMinute] = React.useState('');
+            const [redCard, setRedCard] = React.useState(false);
+            const [penaltyFor, setPenaltyFor] = React.useState('none');
+
+            React.useEffect(() => {
+                localStorage.setItem('eafc27_matches', JSON.stringify(matches));
+                localStorage.setItem('eafc27_rivals', JSON.stringify(rivals));
+                localStorage.setItem('eafc27_fut', JSON.stringify(fut));
+                localStorage.setItem('eafc27_formation', formation);
+                localStorage.setItem('eafc27_squad', JSON.stringify(squad));
+                localStorage.setItem('eafc27_bench', JSON.stringify(bench));
+                localStorage.setItem('eafc27_legends', JSON.stringify(legends));
+            }, [matches, rivals, fut, formation, squad, bench, legends]);
+
+            const maxStages = getDivisionStagesCount(rivals.division);
+
+            const handleRivalsMatchOutcome = (result) => {
+                setRivals(prev => {
+                    const wins = safeNum(prev.wins);
+                    const draws = safeNum(prev.draws);
+                    const losses = safeNum(prev.losses);
+                    const weeklyPoints = safeNum(prev.weeklyPoints);
+                    const winStreak = safeNum(prev.winStreak);
+                    const currentStage = safeNum(prev.currentStage) || 1;
+
+                    if (prev.division === 'Elite') {
+                        return {
+                            ...prev,
+                            wins: wins + (result === 'W' ? 1 : 0),
+                            draws: draws + (result === 'D' ? 1 : 0),
+                            losses: losses + (result === 'L' ? 1 : 0),
+                            weeklyPoints: weeklyPoints + (result === 'W' ? 3 : result === 'D' ? 1 : 0)
+                        };
+                    }
+
+                    let newStreak = winStreak;
+                    let newStage = currentStage;
+                    let newWins = wins;
+                    let newDraws = draws;
+                    let newLosses = losses;
+                    let addPts = 0;
+
+                    if (result === 'W') {
+                        newWins += 1;
+                        addPts = 3;
+                        newStreak += 1;
+                        const step = newStreak >= 2 ? 2 : 1;
+                        newStage = newStage + step;
+                    } else if (result === 'D') {
+                        newDraws += 1;
+                        addPts = 1;
+                        newStreak = 0;
+                    } else if (result === 'L') {
+                        newLosses += 1;
+                        addPts = 0;
+                        newStreak = 0;
+                        const stagesList = getStagesList(maxStages);
+                        const currentStageObj = stagesList.find(s => s.id === newStage);
+                        if (!currentStageObj || !currentStageObj.isCheckpoint) {
+                            newStage = Math.max(1, newStage - 1);
+                        }
+                    }
+
+                    if (newStage >= maxStages && result === 'W') {
+                        const nextDiv = prev.division === 1 ? 'Elite' : safeNum(prev.division) - 1;
+                        const historyItem = {
+                            division: prev.division === 'Elite' ? 'Elite' : `Dywizja ${prev.division}`,
+                            wins: newWins,
+                            draws: newDraws,
+                            losses: newLosses,
+                            date: new Date().toLocaleDateString('pl-PL')
+                        };
+
+                        return {
+                            ...prev,
+                            division: nextDiv,
+                            currentStage: 1,
+                            winStreak: 0,
+                            wins: 0,
+                            draws: 0,
+                            losses: 0,
+                            weeklyPoints: weeklyPoints + addPts,
+                            history: [historyItem, ...(prev.history || [])]
+                        };
+                    }
+
+                    return {
+                        ...prev,
+                        wins: newWins,
+                        draws: newDraws,
+                        losses: newLosses,
+                        winStreak: newStreak,
+                        currentStage: Math.min(maxStages, newStage),
+                        weeklyPoints: weeklyPoints + addPts
+                    };
+                });
+            };
+
+            const undoRivalsOutcome = (result) => {
+                setRivals(prev => {
+                    let wins = safeNum(prev.wins);
+                    let draws = safeNum(prev.draws);
+                    let losses = safeNum(prev.losses);
+                    let weeklyPts = safeNum(prev.weeklyPoints);
+                    let newStage = safeNum(prev.currentStage) || 1;
+                    let newStreak = safeNum(prev.winStreak);
+
+                    if (result === 'W' && wins > 0) {
+                        wins -= 1;
+                        weeklyPts = Math.max(0, weeklyPts - 3);
+                        newStage = Math.max(1, newStage - (newStreak >= 2 ? 2 : 1));
+                        newStreak = Math.max(0, newStreak - 1);
+                    } else if (result === 'D' && draws > 0) {
+                        draws -= 1;
+                        weeklyPts = Math.max(0, weeklyPts - 1);
+                    } else if (result === 'L' && losses > 0) {
+                        losses -= 1;
+                        newStage = Math.min(maxStages, newStage + 1);
+                    }
+
+                    return {
+                        ...prev,
+                        wins,
+                        draws,
+                        losses,
+                        weeklyPoints: weeklyPts,
+                        currentStage: newStage,
+                        winStreak: newStreak
+                    };
+                });
+            };
+
+            const moveStageManually = (direction) => {
+                setRivals(prev => {
+                    let target = (safeNum(prev.currentStage) || 1) + direction;
+                    if (target < 1) target = 1;
+                    if (target > maxStages) target = maxStages;
+                    return { ...prev, currentStage: target };
+                });
+            };
+
+            const addScorerToMatch = () => {
+                if (!currentScorer.trim()) return;
+                const formattedName = currentScorer.trim().charAt(0).toUpperCase() + currentScorer.trim().slice(1).toLowerCase();
+                setMatchScorers([...matchScorers, { name: formattedName, minute: currentMinute.trim() }]);
+                setCurrentScorer('');
+                setCurrentMinute('');
+            };
+
+            const removeScorer = (idx) => {
+                setMatchScorers(matchScorers.filter((_, i) => i !== idx));
+            };
+
+            const addMatch = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const mode = form.mode.value;
+                const gf = parseInt(gfGoals) || 0;
+                const ga = parseInt(gaGoals) || 0;
+                const result = gf > ga ? 'W' : gf < ga ? 'L' : 'D';
+
+                const match = {
+                    id: Date.now(),
+                    mode,
+                    opponent: form.opponent.value || 'Przeciwnik',
+                    gf,
+                    ga,
+                    result,
+                    scorers: matchScorers,
+                    redCard,
+                    penaltyFor
+                };
+
+                setMatches([match, ...matches]);
+
+                if (mode === 'Division Rivals') {
+                    handleRivalsMatchOutcome(result);
+                } else if (mode === 'FUT Champions') {
+                    setFut(prev => ({
+                        ...prev,
+                        wins: safeNum(prev.wins) + (result === 'W' ? 1 : 0),
+                        losses: safeNum(prev.losses) + (result === 'L' ? 1 : 0),
+                        matches: [match, ...(prev.matches || [])]
+                    }));
+                }
+
+                setGfGoals('');
+                setGaGoals('');
+                setMatchScorers([]);
+                setRedCard(false);
+                setPenaltyFor('none');
+                form.reset();
+            };
+
+            const deleteMatch = (id) => {
+                setMatches(matches.filter(m => m.id !== id));
+            };
+
+            const openPositionModal = (pos, isB) => {
+                setSelectedPos(pos);
+                setIsBenchSelection(isB);
+                const currentData = isB ? bench[pos] : squad[pos];
+                if (currentData) {
+                    setPlayerName(currentData.name || '');
+                    setPlayerOvr(currentData.ovr || '');
+                    setPlayerCardType(currentData.cardType || 'Złota');
+                    setPlayerPhoto(currentData.photo || '');
+                } else {
+                    setPlayerName('');
+                    setPlayerOvr('');
+                    setPlayerCardType('Złota');
+                    setPlayerPhoto('');
+                }
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => setPlayerPhoto(reader.result);
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const assignPlayer = (e) => {
+                e.preventDefault();
+                if (!selectedPos) return;
+
+                const formattedName = playerName.trim().charAt(0).toUpperCase() + playerName.trim().slice(1).toLowerCase();
+                const existingData = isBenchSelection ? bench[selectedPos] : squad[selectedPos];
+                const playerData = { 
+                    name: formattedName, 
+                    ovr: playerOvr || '80', 
+                    cardType: playerCardType.trim(), 
+                    photo: playerPhoto,
+                    stats: existingData?.stats || { goals: 0, assists: 0, yellowCards: 0, redCards: 0 }
+                };
+
+                if (isBenchSelection) {
+                    setBench({ ...bench, [selectedPos]: playerData });
+                } else {
+                    setSquad({ ...squad, [selectedPos]: playerData });
+                }
+                setSelectedPos(null);
+            };
+
+            const removePlayerFromPosition = () => {
+                if (!selectedPos) return;
+                if (isBenchSelection) {
+                    const newBench = { ...bench };
+                    delete newBench[selectedPos];
+                    setBench(newBench);
+                } else {
+                    const newSquad = { ...squad };
+                    delete newSquad[selectedPos];
+                    setSquad(newSquad);
+                }
+                setSelectedPos(null);
+            };
+
+            const handleAddLegend = (e) => {
+                e.preventDefault();
+                const newLegend = {
+                    id: Date.now(),
+                    name: playerName.trim(),
+                    pos: playerPosField.trim() || 'ST',
+                    ovr: playerOvr || '85',
+                    cardType: playerCardType || 'Złota',
+                    matches: playerMatchesCount || '0',
+                    goals: playerGoalsCount || '0',
+                    assists: playerAssistsCount || '0',
+                    photo: playerPhoto
+                };
+                setLegends([...legends, newLegend]);
+                setPlayerName('');
+                setPlayerPosField('');
+                setPlayerOvr('');
+                setPlayerMatchesCount('');
+                setPlayerGoalsCount('');
+                setPlayerAssistsCount('');
+                setPlayerPhoto('');
+            };
+
+            const deleteLegend = (id) => {
+                setLegends(legends.filter(l => l.id !== id));
+            };
+
+            const archiveFutWeek = () => {
+                const wins = safeNum(fut.wins);
+                const losses = safeNum(fut.losses);
+                if (wins === 0 && losses === 0) return;
+                const weekRecord = {
+                    week: fut.currentWeek,
+                    wins,
+                    losses,
+                    mvp: fut.mvp || 'Brak'
+                };
+                setFut({
+                    currentWeek: (safeNum(fut.currentWeek) || 1) + 1,
+                    wins: 0,
+                    losses: 0,
+                    mvp: '',
+                    weeksHistory: [weekRecord, ...(fut.weeksHistory || [])],
+                    matches: []
+                });
+            };
+
+            const openSquadPlayerEdit = (key, pData) => {
+                setEditingSquadPlayerKey(key);
+                setSquadPlayerStats(pData.stats || { goals: 0, assists: 0, yellowCards: 0, redCards: 0 });
+            };
+
+            const saveSquadPlayerStats = () => {
+                if (!editingSquadPlayerKey) return;
+                const [type, pos] = editingSquadPlayerKey.split('_');
+                if (type === 'squad') {
+                    setSquad(prev => ({
+                        ...prev,
+                        [pos]: { ...prev[pos], stats: squadPlayerStats }
+                    }));
+                } else {
+                    setBench(prev => ({
+                        ...prev,
+                        [pos]: { ...prev[pos], stats: squadPlayerStats }
+                    }));
+                }
+                setEditingSquadPlayerKey(null);
+            };
+
+            const currentStagesList = getStagesList(maxStages);
+
+            return (
+                <div className="max-w-md mx-auto p-3 pb-20">
+                    <header className="text-center my-4 space-y-1">
+                        <div className="flex items-center justify-center gap-2">
+                            <span className="text-xl monster-anim">🧟</span>
+                            <span className="text-xl">🎃</span>
+                            <h1 className="text-2xl font-black text-orange-500 tracking-wider drop-shadow-[0_0_15px_rgba(249,115,22,0.9)]">EA FC 27 TRACKER</h1>
+                            <span className="text-xl">🎃</span>
+                            <span className="text-xl monster-anim">👻</span>
+                        </div>
+                        <p className="text-[10px] text-green-400 font-bold uppercase tracking-widest drop-shadow-[0_0_10px_rgba(74,222,128,0.7)] flex items-center justify-center gap-1">
+                            <span>🕷️</span> Horror & Scream Edition <span>🕸️</span>
+                        </p>
+                    </header>
+
+                    {/* MENU GŁÓWNE */}
+                    <div className="grid grid-cols-6 gap-1 bg-zinc-950/90 p-1.5 rounded-xl mb-4 border border-orange-500/40 text-center text-[9px] spooky-glow-orange backdrop-blur-sm">
+                        <button onClick={() => setTab('squad')} className={`py-2 font-black rounded-lg transition ${tab === 'squad' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/50' : 'text-zinc-400'}`}>Boisko</button>
+                        <button onClick={() => setTab('players')} className={`py-2 font-black rounded-lg transition ${tab === 'players' ? 'bg-green-400 text-zinc-950 shadow-lg shadow-green-400/50' : 'text-zinc-400'}`}>Zawodnicy</button>
+                        <button onClick={() => setTab('matches')} className={`py-2 font-black rounded-lg transition ${tab === 'matches' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/50' : 'text-zinc-400'}`}>Mecze</button>
+                        <button onClick={() => setTab('rivals')} className={`py-2 font-black rounded-lg transition ${tab === 'rivals' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/50' : 'text-zinc-400'}`}>Rivals</button>
+                        <button onClick={() => setTab('fut')} className={`py-2 font-black rounded-lg transition ${tab === 'fut' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/50' : 'text-zinc-400'}`}>FUT</button>
+                        <button onClick={() => setTab('history')} className={`py-2 font-black rounded-lg transition ${tab === 'history' ? 'bg-orange-500 text-zinc-950 shadow-lg shadow-orange-500/50' : 'text-zinc-400'}`}>Historia</button>
+                    </div>
+
+                    {/* ZАКŁADKA BOISKO (SQUAD BUILDER) */}
+                    {tab === 'squad' && (
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center spooky-card p-3 rounded-xl">
+                                <span className="text-xs font-bold text-zinc-300">Formacja Boiska:</span>
+                                <select value={formation} onChange={e => setFormation(e.target.value)} className="bg-zinc-950 border border-orange-500/40 px-2.5 py-1.5 rounded-lg text-xs font-bold text-orange-400 max-w-[200px]">
+                                    {Object.keys(FORMATIONS).map(f => (
+                                        <option key={f} value={f}>{f}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="relative pitch-bg h-[450px] rounded-2xl border-2 border-green-500/30 shadow-2xl overflow-hidden my-2 spooky-glow-green">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-20 border-b-2 border-x-2 border-green-400/20"></div>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-24 border-t-2 border-x-2 border-green-400/20"></div>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 border-2 border-green-400/20 rounded-full"></div>
+
+                                {FORMATIONS[formation] && FORMATIONS[formation].map((item, idx) => {
+                                    const pData = squad[item.pos];
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            style={{ top: item.top, left: item.left }}
+                                            onClick={() => openPositionModal(item.pos, false)}
+                                            className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer text-center group z-10"
+                                        >
+                                            <div className="w-12 h-15 rounded-lg border-2 flex flex-col items-center justify-center shadow-lg transition transform group-active:scale-95 overflow-hidden bg-gradient-to-b from-orange-400 via-orange-600 to-zinc-950 text-zinc-950 border-orange-300">
+                                                {pData ? (
+                                                    pData.photo ? (
+                                                        <div className="w-full h-full relative flex items-center justify-center">
+                                                            <img src={pData.photo} alt={pData.name} className="absolute inset-0 w-full h-full object-cover" />
+                                                            <div className="absolute bottom-0 inset-x-0 bg-zinc-950/80 text-[8px] font-black text-center text-orange-400 leading-tight py-0.5">
+                                                                {pData.ovr} {pData.name.substring(0, 5)}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-[10px] font-black leading-none text-zinc-100">{pData.ovr}</span>
+                                                            <span className="text-[9px] font-extrabold uppercase leading-tight truncate px-0.5 text-orange-300">{pData.name.substring(0, 6)}</span>
+                                                        </>
+                                                    )
+                                                ) : (
+                                                    <span className="text-[10px] font-bold text-green-400 bg-zinc-950/80 w-full h-full flex items-center justify-center">+</span>
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] font-black bg-zinc-950/90 text-zinc-200 px-1 py-0.5 rounded shadow mt-0.5 block border border-zinc-800">
+                                                {item.pos}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="spooky-card p-4 rounded-2xl space-y-3">
+                                <h3 className="text-xs font-black text-zinc-300 uppercase tracking-wide">Ławka Rezerwowych</h3>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {BENCH_POSITIONS.map((bPos) => {
+                                        const bData = bench[bPos];
+                                        return (
+                                            <div key={bPos} onClick={() => openPositionModal(bPos, true)} className="bg-zinc-950/90 p-2 rounded-xl border border-zinc-800 cursor-pointer text-center group flex flex-col items-center justify-center h-16">
+                                                {bData ? (
+                                                    <div className="text-[10px] font-black text-orange-400 truncate w-full">{bData.name}</div>
+                                                ) : (
+                                                    <span className="text-green-400 font-bold text-xs">+</span>
+                                                )}
+                                                <span className="text-[8px] text-zinc-500 font-bold mt-1">{bPos}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* MODAL EDIT ZAWODNIKA */}
+                            {selectedPos && (
+                                <div className="fixed inset-0 bg-zinc-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
+                                    <div className="spooky-card p-5 rounded-2xl w-full max-w-xs space-y-4 shadow-2xl spooky-glow-orange">
+                                        <h3 className="text-sm font-bold text-zinc-200 text-center uppercase">
+                                            Pozycja: <span className="text-orange-400">{selectedPos}</span>
+                                        </h3>
+                                        <form onSubmit={assignPlayer} className="space-y-3">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Nazwisko (np. Mbappe)" 
+                                                required 
+                                                value={playerName} 
+                                                onChange={e => setPlayerName(e.target.value)}
+                                                className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-zinc-200 font-bold focus:border-orange-500 outline-none"
+                                            />
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <input 
+                                                    type="number" 
+                                                    placeholder="OVR (np. 91)" 
+                                                    min="40" 
+                                                    max="99" 
+                                                    value={playerOvr} 
+                                                    onChange={e => setPlayerOvr(e.target.value)}
+                                                    className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-zinc-200 font-bold focus:border-orange-500 outline-none"
+                                                />
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Karta (np. TOTY)" 
+                                                    value={playerCardType} 
+                                                    onChange={e => setPlayerCardType(e.target.value)}
+                                                    className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-orange-400 font-bold focus:border-orange-500 outline-none"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-zinc-400 block mb-1">Zdjęcie z galerii:</label>
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    onChange={handleImageUpload}
+                                                    className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-300 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-500 file:text-zinc-950"
+                                                />
+                                            </div>
+                                            <div className="flex gap-2 pt-1">
+                                                <button type="submit" className="flex-1 bg-orange-500 text-zinc-950 font-black py-2 rounded-xl text-xs">Zapisz</button>
+                                                {(isBenchSelection ? bench[selectedPos] : squad[selectedPos]) && (
+                                                    <button type="button" onClick={removePlayerFromPosition} className="bg-rose-600/30 text-rose-400 font-bold px-3 py-2 rounded-xl text-xs border border-rose-500/40">Usuń</button>
+                                                )}
+                                                <button type="button" onClick={() => setSelectedPos(null)} className="bg-zinc-800 text-zinc-400 font-bold px-3 py-2 rounded-xl text-xs">Anuluj</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* ZAKŁADKA ZAWODNICY */}
+                    {tab === 'players' && (
+                        <div className="space-y-4">
+                            <div className="spooky-card p-4 rounded-2xl space-y-3">
+                                <h2 className="text-sm font-black text-orange-400 uppercase tracking-wide flex items-center justify-between">
+                                    <span>🧟 Dodaj Legendę Klubu</span>
+                                    <span className="text-xs">🕸️</span>
+                                </h2>
+                                <form onSubmit={handleAddLegend} className="space-y-2">
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <input type="text" placeholder="Imię / Nazwisko" required value={playerName} onChange={e => setPlayerName(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                        <input type="text" placeholder="Pozycja (np. ST)" required value={playerPosField} onChange={e => setPlayerPosField(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <input type="number" placeholder="OVR" value={playerOvr} onChange={e => setPlayerOvr(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                        <input type="text" placeholder="Karta (np. TOTY)" value={playerCardType} onChange={e => setPlayerCardType(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                        <input type="number" placeholder="Mecze" value={playerMatchesCount} onChange={e => setPlayerMatchesCount(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <input type="number" placeholder="Gole" value={playerGoalsCount} onChange={e => setPlayerGoalsCount(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                        <input type="number" placeholder="Asysty" value={playerAssistsCount} onChange={e => setPlayerAssistsCount(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-zinc-200 focus:border-orange-500 outline-none" />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] text-zinc-400 block mb-1">Zdjęcie zawodnika:</label>
+                                        <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full bg-zinc-950 border border-zinc-800 p-1.5 rounded-xl text-xs text-zinc-300 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-orange-500 file:text-zinc-950" />
+                                    </div>
+                                    <button type="submit" className="w-full bg-orange-500 text-zinc-950 font-black py-2 rounded-xl text-xs uppercase hover:bg-orange-400 transition">Dodaj do Legend</button>
+                                </form>
+                            </div>
+
+                            <div className="spooky-card p-4 rounded-2xl space-y-3">
+                                <h2 className="text-xs font-black text-green-400 uppercase tracking-wide flex items-center justify-between">
+                                    <span>👑 Legendy Klubu</span>
+                                    <span>🦇</span>
+                                </h2>
+                                {legends.length > 0 ? (
+                                    <div className="space-y-2">
+                                        {legends.map((l) => (
+                                            <div key={l.id} className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800 flex justify-between items-center text-xs">
+                                                <div className="flex items-center space-x-2.5">
+                                                    <div className="w-9 h-11 rounded bg-gradient-to-b from-orange-400 to-orange-600 text-zinc-950 font-black flex flex-col items-center justify-center overflow-hidden flex-shrink-0 relative border border-orange-300">
+                                                        {l.photo ? <img src={l.photo} alt={l.name} className="w-full h-full object-cover" /> : <span className="text-[10px]">{l.ovr}</span>}
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className="text-[9px] text-green-400 font-bold">{l.pos}</span>
+                                                            <h4 className="font-black text-zinc-100">{l.name}</h4>
+                                                        </div>
+                                                        <span className="text-[9px] text-zinc-400">{l.cardType} • Mecze: {l.matches}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="text-right text-[10px] font-bold">
+                                                        <span className="text-orange-400 block">⚽ {l.goals} goli</span>
+                                                        <span className="text-green-400 block">🎯 {l.assists} as.</span>
+                                                    </div>
+                                                    <button onClick={() => deleteLegend(l.id)} className="text-zinc-600 hover:text-rose-400 font-bold text-sm p-1">✕</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-zinc-500 text-center py-3">Brak wpisanych legend klubu.</p>
+                                )}
+                            </div>
+
+                            <div className="spooky-card p-4 rounded-2xl space-y-3">
+                                <h2 className="text-xs font-black text-orange-400 uppercase tracking-wide">Piłkarze z Boiska & Ławki (Edycja Statystyk)</h2>
+                                <div className="space-y-2">
+                                    {Object.entries(squad).map(([pos, p]) => {
+                                        const stats = p.stats || { goals: 0, assists: 0, yellowCards: 0, redCards: 0 };
+                                        return (
+                                            <div key={`squad_${pos}`} className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800 flex justify-between items-center text-xs">
+                                                <div className="flex items-center space-x-2.5">
+                                                    <div className="w-8 h-10 rounded bg-orange-500 text-zinc-950 font-black flex flex-col items-center justify-center overflow-hidden flex-shrink-0">
+                                                        {p.photo ? <img src={p.photo} alt={p.name} className="w-full h-full object-cover" /> : <span className="text-[9px]">{p.ovr}</span>}
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-[9px] text-green-400 font-bold block">{pos}</span>
+                                                        <h4 className="font-black text-zinc-200">{p.name}</h4>
+                                                        <span className="text-[8px] text-zinc-500">⚽ {stats.goals} | 🎯 {stats.assists} | 🟨 {stats.yellowCards} | 🟥 {stats.redCards}</span>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => openSquadPlayerEdit(`squad_${pos}`, p)} className="bg-zinc-900 border border-orange-500/40 text-orange-400 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-orange-500/10">
+                                                    Edytuj Staty
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+
+                                    {Object.entries(bench).map(([pos, p]) => {
+                                        const stats = p.stats || { goals: 0, assists: 0, yellowCards: 0, redCards: 0 };
+                                        return (
+                                            <div key={`bench_${pos}`} className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800 flex justify-between items-center text-xs">
+                                                <div className="flex items-center space-x-2.5">
+                                                    <div className="w-8 h-10 rounded bg-zinc-800 text-green-400 font-black flex flex-col items-center justify-center overflow-hidden flex-shrink-0">
+                                                        {p.photo ? <img src={p.photo} alt={p.name} className="w-full h-full object-cover" /> : <span className="text-[9px]">{p.ovr}</span>}
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-[9px] text-zinc-400 font-bold block">{pos} (Ławka)</span>
+                                                        <h4 className="font-black text-zinc-200">{p.name}</h4>
+                                                        <span className="text-[8px] text-zinc-500">⚽ {stats.goals} | 🎯 {stats.assists} | 🟨 {stats.yellowCards} | 🟥 {stats.redCards}</span>
+                                                    </div>
+                                                </div>
+                                                <button onClick={() => openSquadPlayerEdit(`bench_${pos}`, p)} className="bg-zinc-900 border border-orange-500/40 text-orange-400 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-orange-500/10">
+                                                    Edytuj Staty
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* MODAL EDYCJI STATYSTYK */}
+                    {editingSquadPlayerKey && (
+                        <div className="fixed inset-0 bg-zinc-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
+                            <div className="spooky-card p-5 rounded-2xl w-full max-w-xs space-y-4 shadow-2xl spooky-glow-orange">
+                                <h3 className="text-sm font-black text-orange-400 text-center uppercase">Edycja Statystyk Zawodnika</h3>
+                                <div className="space-y-3 text-xs">
+                                    <div>
+                                        <label className="text-zinc-400 block mb-1">Gole (⚽):</label>
+                                        <input type="number" value={squadPlayerStats.goals} onChange={e => setSquadPlayerStats({...squadPlayerStats, goals: Number(e.target.value)})} className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-zinc-200 font-bold" />
+                                    </div>
+                                    <div>
+                                        <label className="text-zinc-400 block mb-1">Asysty (🎯):</label>
+                                        <input type="number" value={squadPlayerStats.assists} onChange={e => setSquadPlayerStats({...squadPlayerStats, assists: Number(e.target.value)})} className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-zinc-200 font-bold" />
+                                    </div>
+                                    <div>
+                                        <label className="text-zinc-400 block mb-1">Żółte Kartki (🟨):</label>
+                                        <input type="number" value={squadPlayerStats.yellowCards} onChange={e => setSquadPlayerStats({...squadPlayerStats, yellowCards: Number(e.target.value)})} className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-zinc-200 font-bold" />
+                                    </div>
+                                    <div>
+                                        <label className="text-zinc-400 block mb-1">Czerwone Kartki (🟥):</label>
+                                        <input type="number" value={squadPlayerStats.redCards} onChange={e => setSquadPlayerStats({...squadPlayerStats, redCards: Number(e.target.value)})} className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-zinc-200 font-bold" />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 pt-1">
+                                    <button onClick={saveSquadPlayerStats} className="flex-1 bg-orange-500 text-zinc-950 font-black py-2 rounded-xl text-xs">Zapisz</button>
+                                    <button onClick={() => setEditingSquadPlayerKey(null)} className="bg-zinc-800 text-zinc-400 font-bold px-3 py-2 rounded-xl text-xs">Anuluj</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ZAKŁADKA RIVALS */}
+                    {tab === 'rivals' && (
+                        <div className="space-y-4">
+                            <div className="spooky-card p-4 rounded-2xl space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-sm font-black text-orange-400 uppercase tracking-wide">DIVISION RIVALS</h2>
+                                    <select 
+                                        value={rivals.division} 
+                                        onChange={e => setRivals({...rivals, division: e.target.value === 'Elite' ? 'Elite' : Number(e.target.value), currentStage: 1})} 
+                                        className="bg-zinc-950 border border-orange-500/40 px-3 py-1.5 rounded-xl text-xs text-green-400 font-bold"
+                                    >
+                                        <option value="Elite">👑 Liga Elitarna</option>
+                                        {[...Array(10)].map((_, i) => (
+                                            <option key={10 - i} value={10 - i}>Dywizja {10 - i}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {rivals.division !== 'Elite' ? (
+                                    <div className="bg-zinc-950/90 p-4 rounded-xl border border-zinc-800 space-y-3">
+                                        <div className="flex justify-between items-center text-[11px] font-bold">
+                                            <span className="text-zinc-400">Dywizja {rivals.division} ({maxStages} Kroki)</span>
+                                            {safeNum(rivals.winStreak) >= 2 && (
+                                                <span className="text-green-400 animate-pulse bg-green-400/10 px-2 py-0.5 rounded-full border border-green-400/30 spooky-glow-green">
+                                                    🔥 Na Fali (+2)!
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="relative flex items-center justify-between pt-6 pb-2 px-1 overflow-x-auto gap-1">
+                                            <div className="absolute top-1/2 left-0 right-0 h-1 bg-zinc-800 -translate-y-1/2 z-0"></div>
+                                            
+                                            {currentStagesList.map((st) => {
+                                                const isCurrent = safeNum(rivals.currentStage) === st.id;
+                                                const isPassed = safeNum(rivals.currentStage) > st.id;
+
+                                                return (
+                                                    <div key={st.id} className="relative z-10 flex flex-col items-center flex-shrink-0">
+                                                        {isCurrent && (
+                                                            <div className="absolute -top-6 text-orange-400 text-xs animate-bounce font-black">
+                                                                🎃
+                                                            </div>
+                                                        )}
+                                                        <div className={`w-7 h-7 rounded-lg border flex items-center justify-center text-[10px] font-bold transition-all ${
+                                                            isCurrent 
+                                                                ? 'bg-orange-500 text-zinc-950 border-orange-300 scale-110 shadow-lg shadow-orange-500/50 font-black' 
+                                                                : isPassed 
+                                                                ? 'bg-zinc-900 text-green-400 border-green-500/40' 
+                                                                : st.isCheckpoint 
+                                                                ? 'bg-zinc-900 text-orange-400 border-orange-500/50' 
+                                                                : 'bg-zinc-900 text-zinc-600 border-zinc-800'
+                                                        }`}>
+                                                            {st.label}
+                                                        </div>
+                                                        {st.isCheckpoint && (
+                                                            <span className="text-[7px] text-orange-400 font-extrabold mt-1 uppercase">CP</span>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="flex justify-between items-center pt-2 border-t border-zinc-900">
+                                            <span className="text-[10px] text-zinc-400 font-bold">Ręczna zmiana kroku:</span>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => moveStageManually(-1)} className="bg-zinc-900 border border-zinc-800 text-zinc-300 px-2.5 py-1 rounded-lg text-[10px] font-bold hover:bg-zinc-800">
+                                                    ◀ Wstecz
+                                                </button>
+                                                <button onClick={() => moveStageManually(1)} className="bg-zinc-900 border border-zinc-800 text-zinc-300 px-2.5 py-1 rounded-lg text-[10px] font-bold hover:bg-zinc-800">
+                                                    Naprzód ▶
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="bg-zinc-950/90 p-6 rounded-xl border border-orange-500/30 text-center space-y-2">
+                                        <div className="text-3xl">👑</div>
+                                        <h3 className="text-base font-black text-orange-400 uppercase">Liga Elitarna</h3>
+                                        <p className="text-xs text-zinc-400">Jesteś na samym szczycie! Graj mecze i zbieraj punkty nagród tygodniowych.</p>
+                                    </div>
+                                )}
+
+                                <div className="bg-gradient-to-br from-zinc-950 to-zinc-900 p-4 rounded-xl border border-zinc-800 flex justify-between items-center shadow-inner">
+                                    <div className="space-y-1">
+                                        <h3 className="text-xs font-bold text-zinc-200">Nagrody Tygodniowe</h3>
+                                        <p className="text-[10px] text-zinc-400 max-w-[180px]">
+                                            {safeNum(rivals.weeklyPoints) >= 30 
+                                                ? 'Odblokowano ulepszone nagrody tygodniowe!' 
+                                                : safeNum(rivals.weeklyPoints) >= 15 
+                                                ? `Zdobądź jeszcze ${30 - safeNum(rivals.weeklyPoints)} pkt do ulepszonych nagród.` 
+                                                : `Zdobądź jeszcze ${15 - safeNum(rivals.weeklyPoints)} pkt, aby odebrać nagrody.`}
+                                        </p>
+                                        <div className="pt-1">
+                                            <span className="text-xs font-black text-orange-400">{safeNum(rivals.weeklyPoints)} / 15 pkt</span>
+                                            <span className="text-[10px] text-green-400 font-bold ml-2">(Ulepszone: 30 pkt)</span>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setRivals({...rivals, weeklyPoints: 0})} className="text-[9px] text-zinc-500 underline hover:text-rose-400">Zresetuj tydzień</button>
+                                </div>
+
+                                <div className="space-y-2 pt-1">
+                                    <span className="text-[11px] font-bold text-zinc-400 block">Szybka Aktualizacja Wyniku:</span>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div className="flex flex-col gap-1">
+                                            <button onClick={() => handleRivalsMatchOutcome('W')} className="bg-green-500/20 border border-green-500/40 text-green-400 font-bold py-2 rounded-xl text-xs hover:bg-green-500/30 transition">
+                                                + Wygrana
+                                            </button>
+                                            <button onClick={() => undoRivalsOutcome('W')} className="bg-zinc-950 border border-green-900/40 text-green-500 text-[9px] py-1 rounded-lg hover:bg-rose-950/40">
+                                                – Usunąć Wygraną
+                                            </button>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1">
+                                            <button onClick={() => handleRivalsMatchOutcome('D')} className="bg-orange-500/20 border border-orange-500/40 text-orange-400 font-bold py-2 rounded-xl text-xs hover:bg-orange-500/30 transition">
+                                                + Remis
+                                            </button>
+                                            <button onClick={() => undoRivalsOutcome('D')} className="bg-zinc-950 border border-orange-900/40 text-orange-500 text-[9px] py-1 rounded-lg hover:bg-rose-950/40">
+                                                – Usunąć Remis
+                                            </button>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1">
+                                            <button onClick={() => handleRivalsMatchOutcome('L')} className="bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold py-2 rounded-xl text-xs hover:bg-rose-500/30 transition">
+                                                + Porażka
+                                            </button>
+                                            <button onClick={() => undoRivalsOutcome('L')} className="bg-zinc-950 border border-rose-900/40 text-rose-500 text-[9px] py-1 rounded-lg hover:bg-rose-950/40">
+                                                – Usunąć Porażkę
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2 text-center pt-2 border-t border-zinc-800">
+                                    <div className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800"><span className="block text-lg font-black text-green-400">{safeNum(rivals.wins)}</span><span className="text-[9px] text-zinc-400 uppercase font-bold">Wygrane</span></div>
+                                    <div className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800"><span className="block text-lg font-black text-orange-400">{safeNum(rivals.draws)}</span><span className="text-[9px] text-zinc-400 uppercase font-bold">Remisy</span></div>
+                                    <div className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800"><span className="block text-lg font-black text-rose-400">{safeNum(rivals.losses)}</span><span className="text-[9px] text-zinc-400 uppercase font-bold">Porażki</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ZAKŁADKA HISTORIA */}
+                    {tab === 'history' && (
+                        <div className="spooky-card p-4 rounded-2xl space-y-3">
+                            <h2 className="text-sm font-black text-orange-400 uppercase tracking-wide mb-2">Historia Dywizji Rivals</h2>
+                            {rivals.history && rivals.history.length > 0 ? (
+                                <div className="space-y-2">
+                                    {rivals.history.map((h, idx) => (
+                                        <div key={idx} className="bg-zinc-950/90 p-3 rounded-xl border border-zinc-800 flex justify-between items-center text-xs">
+                                            <div>
+                                                <span className="font-black text-orange-400 block">{h.division}</span>
+                                                <span className="text-[10px] text-zinc-500">Ukończono: {h.date}</span>
+                                            </div>
+                                            <div className="font-bold space-x-2">
+                                                <span className="text-green-400">{h.wins}W</span>
+                                                <span className="text-orange-400">{h.draws}R</span>
+                                                <span className="text-rose-400">{h.losses}P</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-xs text-zinc-500 text-center py-6">Brak ukończonych dywizji w historii. Awansuj, aby zapisać bilans!</p>
+                            )}
+                        </div>
+                    )}
+
+                    {/* ZAKŁADKA FUT CHAMPIONS */}
+                    {tab === 'fut' && (
+                        <div className="space-y-4">
+                            <div className="spooky-card p-4 rounded-2xl space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-sm font-bold text-orange-400 uppercase">FUT Champions (Tydzień {fut.currentWeek})</h2>
+                                    <button onClick={archiveFutWeek} className="bg-orange-500 text-zinc-950 font-black px-3 py-1 rounded-lg text-[10px]">Zakończ Tydzień</button>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] text-zinc-400 font-bold block">MVP Tygodnia FUT Champions:</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Wpisz MVP (np. Mbappe)" 
+                                        value={fut.mvp} 
+                                        onChange={e => setFut({...fut, mvp: e.target.value})}
+                                        className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-xl text-xs text-orange-400 font-bold"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-zinc-950/90 p-3 rounded-xl border border-zinc-800 text-center space-y-2">
+                                        <span className="text-xs text-zinc-400 block font-bold">Wygrane:</span>
+                                        <div className="flex items-center justify-center gap-3">
+                                            <button onClick={() => setFut({...fut, wins: Math.max(0, safeNum(fut.wins) - 1)})} className="bg-zinc-900 border border-zinc-800 text-rose-400 w-7 h-7 rounded-lg font-black">-</button>
+                                            <span className="text-2xl font-black text-green-400">{safeNum(fut.wins)}</span>
+                                            <button onClick={() => setFut({...fut, wins: safeNum(fut.wins) + 1})} className="bg-zinc-900 border border-zinc-800 text-green-400 w-7 h-7 rounded-lg font-black">+</button>
+                                        </div>
+                                    </div>
+                                    <div className="bg-zinc-950/90 p-3 rounded-xl border border-zinc-800 text-center space-y-2">
+                                        <span className="text-xs text-zinc-400 block font-bold">Porażki:</span>
+                                        <div className="flex items-center justify-center gap-3">
+                                            <button onClick={() => setFut({...fut, losses: Math.max(0, safeNum(fut.losses) - 1)})} className="bg-zinc-900 border border-zinc-800 text-rose-400 w-7 h-7 rounded-lg font-black">-</button>
+                                            <span className="text-2xl font-black text-rose-400">{safeNum(fut.losses)}</span>
+                                            <button onClick={() => setFut({...fut, losses: safeNum(fut.losses) + 1})} className="bg-zinc-900 border border-zinc-800 text-green-400 w-7 h-7 rounded-lg font-black">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 pt-2 border-t border-zinc-800">
+                                    <h3 className="text-xs font-bold text-zinc-400">Archiwum Tygodni FUT Champions:</h3>
+                                    {fut.weeksHistory && fut.weeksHistory.length > 0 ? (
+                                        fut.weeksHistory.map((wh, idx) => (
+                                            <div key={idx} className="bg-zinc-950/90 p-3 rounded-xl border border-zinc-800 flex justify-between items-center text-xs">
+                                                <div>
+                                                    <span className="font-black text-orange-400 block">Tydzień {wh.week}</span>
+                                                    <span className="text-[10px] text-zinc-400">MVP: <strong className="text-zinc-200">{wh.mvp}</strong></span>
+                                                </div>
+                                                <div className="text-right font-bold">
+                                                    <span className="text-green-400">{wh.wins}W</span> - <span className="text-rose-400">{wh.losses}L</span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-zinc-500 text-center py-2">Brak zarchiwizowanych tygodni.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ZAKŁADKA MECZE */}
+                    {tab === 'matches' && (
+                        <div className="space-y-4">
+                            <div className="spooky-card p-4 rounded-2xl space-y-4">
+                                <h2 className="text-sm font-bold text-orange-400 uppercase">Dodaj Mecz ze Szczegółami</h2>
+                                <form onSubmit={addMatch} className="space-y-3">
+                                    <select name="mode" className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-green-400 font-bold">
+                                        <option value="Division Rivals">Division Rivals</option>
+                                        <option value="FUT Champions">FUT Champions</option>
+                                        <option value="Draft">Draft</option>
+                                        <option value="Mecz towarzyski">Mecz towarzyski</option>
+                                    </select>
+                                    <input type="text" name="opponent" placeholder="Nazwa Rywala" className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-zinc-200 font-bold" />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <input type="number" value={gfGoals} onChange={e => setGfGoals(e.target.value)} placeholder="Twoje gole" required min="0" className="bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-zinc-200 font-bold" />
+                                        <input type="number" value={gaGoals} onChange={e => setGaGoals(e.target.value)} placeholder="Gole rywala" required min="0" className="bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-xs text-zinc-200 font-bold" />
+                                    </div>
+
+                                    <div className="bg-zinc-950/90 p-3 rounded-xl border border-zinc-800 space-y-2">
+                                        <label className="text-[10px] text-zinc-400 font-bold block">Strzelcy bramek i minuty:</label>
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Strzelec (np. Mbappe)" 
+                                                value={currentScorer} 
+                                                onChange={e => setCurrentScorer(e.target.value)}
+                                                className="flex-1 bg-zinc-900 border border-zinc-800 p-2 rounded-lg text-xs text-zinc-200"
+                                            />
+                                            <input 
+                                                type="text" 
+                                                placeholder="Min (np. 45')" 
+                                                value={currentMinute} 
+                                                onChange={e => setCurrentMinute(e.target.value)}
+                                                className="w-20 bg-zinc-900 border border-zinc-800 p-2 rounded-lg text-xs text-zinc-200"
+                                            />
+                                            <button type="button" onClick={addScorerToMatch} className="bg-orange-500 text-zinc-950 font-bold px-3 py-2 rounded-lg text-xs">+</button>
+                                        </div>
+
+                                        {matchScorers.length > 0 && (
+                                            <div className="flex flex-wrap gap-1 pt-1">
+                                                {matchScorers.map((s, idx) => (
+                                                    <span key={idx} className="bg-zinc-900 border border-zinc-800 text-[10px] text-orange-400 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                        ⚽ {s.name} {s.minute ? `(${s.minute}')` : ''}
+                                                        <button type="button" onClick={() => removeScorer(idx)} className="text-rose-400 font-black ml-1">×</button>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                        <label className="bg-zinc-950/90 p-2.5 rounded-xl border border-zinc-800 flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked={redCard} onChange={e => setRedCard(e.target.checked)} className="rounded text-orange-500 focus:ring-0" />
+                                            <span className="text-rose-400 font-bold">🟥 Czerwona kartka</span>
+                                        </label>
+                                        
+                                        <select value={penaltyFor} onChange={e => setPenaltyFor(e.target.value)} className="bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl text-zinc-300 font-bold">
+                                            <option value="none">Brak karnych</option>
+                                            <option value="us">🎯 Rzut karny dla nas</option>
+                                            <option value="them">⚠️ Rzut karny dla rywala</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" className="w-full bg-orange-500 text-zinc-950 font-black py-2.5 rounded-xl text-xs uppercase">Zapisz Mecz</button>
+                                </form>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="text-xs font-bold text-zinc-400">Ostatnio Rozegrane Mecze</h3>
+                                {matches.length > 0 ? (
+                                    matches.map(m => (
+                                        <div key={m.id} className="bg-zinc-900/90 border border-zinc-800 p-3 rounded-2xl flex justify-between items-center text-xs">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center space-x-2">
+                                                    <span className={`px-2 py-0.5 rounded font-black text-[9px] ${m.result === 'W' ? 'bg-green-500/20 text-green-400' : m.result === 'D' ? 'bg-orange-500/20 text-orange-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                                                        {m.result === 'W' ? 'WYGRANA' : m.result === 'D' ? 'REMIS' : 'PORAŻKA'}
+                                                    </span>
+                                                    <span className="text-zinc-400 text-[10px] font-bold">{m.mode}</span>
+                                                </div>
+                                                <div className="font-bold text-zinc-200">
+                                                    vs {m.opponent} ({m.gf}:{m.ga})
+                                                </div>
+                                                {m.scorers && m.scorers.length > 0 && (
+                                                    <div className="text-[10px] text-orange-400 font-medium">
+                                                        ⚽ {m.scorers.map(s => `${s.name} ${s.minute ? `(${s.minute}')` : ''}`).join(', ')}
+                                                    </div>
+                                                )}
+                                                <div className="flex gap-2 text-[9px]">
+                                                    {m.redCard && <span className="text-rose-400 font-bold">🟥 Czerwona kartka</span>}
+                                                    {m.penaltyFor === 'us' && <span className="text-green-400 font-bold">🎯 Karny dla nas</span>}
+                                                    {m.penaltyFor === 'them' && <span className="text-orange-400 font-bold">⚠️ Karny rywala</span>}
+                                                </div>
+                                            </div>
+                                            <button onClick={() => deleteMatch(m.id)} className="text-zinc-600 hover:text-rose-400 font-bold text-sm p-1">✕</button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-xs text-zinc-500 text-center py-4">Brak rozegranych meczów.</p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
