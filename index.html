@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA FC 27 Tracker & Squad Builder</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .pitch-bg {
+            background: #15803d;
+            background-image: 
+                linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255,255,255,0.05) 50%, transparent 50%);
+            background-size: 100% 40px, 100% 100%;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+    <div id="root"></div>
+    <script type="text/babel">
+        const FORMATIONS = {
+            '4-3-3 (1)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCM', top: '45%', left: '28%' }, { pos: 'CM', top: '50%', left: '50%' }, { pos: 'RCM', top: '45%', left: '72%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (2) (Cofnięty)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCM', top: '42%', left: '30%' }, { pos: 'RCM', top: '42%', left: '70%' }, { pos: 'CDM', top: '56%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-3-1 (Szeroko)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LM', top: '30%', left: '18%' }, { pos: 'CAM', top: '30%', left: '50%' }, { pos: 'RM', top: '30%', left: '82%' },
+                { pos: 'LCDM', top: '52%', left: '35%' }, { pos: 'RCDM', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-4-2 (Klasyczna)': [
+                { pos: 'ST1', top: '16%', left: '35%' }, { pos: 'ST2', top: '16%', left: '65%' },
+                { pos: 'LM', top: '42%', left: '15%' }, { pos: 'CM1', top: '46%', left: '38%' }, { pos: 'CM2', top: '46%', left: '62%' }, { pos: 'RM', top: '42%', left: '85%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-5-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '32%', left: '50%' },
+                { pos: 'LM', top: '45%', left: '12%' }, { pos: 'CDM1', top: '50%', left: '36%' }, { pos: 'CDM2', top: '50%', left: '64%' }, { pos: 'RM', top: '45%', left: '88%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-3-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'LCM', top: '42%', left: '28%' }, { pos: 'CM', top: '46%', left: '50%' }, { pos: 'RCM', top: '42%', left: '72%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ]
+        };
+
+        const BENCH_POSITIONS = ['SUB 1', 'SUB 2', 'SUB 3', 'SUB 4', 'SUB 5', 'SUB 6', 'SUB 7'];
+
+        function App() {
+            const [tab, setTab] = React.useState('squad');
+            const [matches, setMatches] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_matches')) || []);
+            const [stats, setStats] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_stats')) || { wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0 });
+            const [rivals, setRivals] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_rivals')) || { division: 10 });
+            const [fut, setFut] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_fut')) || { wins: 0, losses: 0 });
+            
+            const [formation, setFormation] = React.useState(() => localStorage.getItem('eafc27_formation') || '4-3-3 (1)');
+            const [squad, setSquad] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_squad')) || {});
+            const [bench, setBench] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_bench')) || {});
+            const [legends, setLegends] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_legends')) || []);
+
+            const [selectedPos, setSelectedPos] = React.useState(null);
+            const [isBenchSelection, setIsBenchSelection] = React.useState(false);
+            const [playerName, setPlayerName] = React.useState('');
+            const [playerOvr, setPlayerOvr] = React.useState('');
+
+            React.useEffect(() => {
+                localStorage.setItem('eafc27_matches', JSON.stringify(matches));
+                localStorage.setItem('eafc27_stats', JSON.stringify(stats));
+                localStorage.setItem('eafc27_rivals', JSON.stringify(rivals));
+                localStorage.setItem('eafc27_fut', JSON.stringify(fut));
+                localStorage.setItem('eafc27_formation', formation);
+                localStorage.setItem('eafc27_squad', JSON.stringify(squad));
+                localStorage.setItem('eafc27_bench', JSON.stringify(bench));
+                localStorage.setItem('eafc27_legends', JSON.stringify(legends));
+            }, [matches, stats, rivals, fut, formation, squad, bench, legends]);
+
+            const addMatch = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const match = {
+                    id: Date.now(),
+                    mode: form.mode.value,
+                    opponent: form.opponent.value,
+                    gf: parseInt(form.gf.value),
+                    ga: parseInt(form.ga.value),
+                    result: form.gf.value > form.ga.value ? 'W' : form.gf.value < form.ga.value ? 'L' : 'D'
+                };
+                setMatches([match, ...matches]);
+                setStats(prev => ({
+                    wins: prev.wins + (match.result === 'W' ? 1 : 0),
+                    draws: prev.draws + (match.result === 'D' ? 1 : 0),
+                    losses: prev.losses + (match.result === 'L' ? 1 : 0),
+                    goalsFor: prev.goalsFor + match.gf,
+                    goalsAgainst: prev.goalsAgainst + match.ga
+                }));
+                form.reset();
+            };
+
+            const assignPlayer = (e) => {
+                e.preventDefault();
+                if (!selectedPos) return;
+
+                if (isBenchSelection) {
+                    setBench({
+                        ...bench,
+                        [selectedPos]: { name: playerName, ovr: playerOvr || '80' }
+                    });
+                } else {
+                    setSquad({
+                        ...squad,
+                        [selectedPos]: { name: playerName, ovr: playerOvr || '80' }
+                    });
+                }
+                setSelectedPos(null);
+                setPlayerName('');
+                setPlayerOvr('');
+            };
+
+            const removePlayer = (pos, isBench) => {
+                if (isBench) {
+                    const newBench = { ...bench };
+                    delete newBench[pos];
+                    setBench(newBench);
+                } else {
+                    const newSquad = { ...squad };
+                    delete newSquad[pos];
+                    setSquad(newSquad);
+                }
+            };
+
+            const addLegend = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const legend = {
+                    id: Date.now(),
+                    name: form.lname.value,
+                    pos: form.lpos.value,
+                    
