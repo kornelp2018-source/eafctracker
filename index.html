@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA FC 27 Tracker & Squad Builder</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .pitch-bg {
+            background: #15803d;
+            background-image: 
+                linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255,255,255,0.05) 50%, transparent 50%);
+            background-size: 100% 40px, 100% 100%;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+    <div id="root"></div>
+    <script type="text/babel">
+        const FORMATIONS = {
+            '4-3-3 (1)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCM', top: '45%', left: '28%' }, { pos: 'CM', top: '50%', left: '50%' }, { pos: 'RCM', top: '45%', left: '72%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (2) (Cofnięty)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCM', top: '42%', left: '30%' }, { pos: 'RCM', top: '42%', left: '70%' }, { pos: 'CDM', top: '56%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (3) (Ofensywny)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'CAM', top: '35%', left: '50%' }, { pos: 'LCDM', top: '52%', left: '35%' }, { pos: 'RCDM', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (4) (Fałszywa 9)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'CF', top: '24%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCM', top: '45%', left: '30%' }, { pos: 'RCM', top: '45%', left: '70%' }, { pos: 'CDM', top: '58%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-3 (5) (Wysunięty)': [
+                { pos: 'LW', top: '22%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '22%', left: '82%' },
+                { pos: 'LCAM', top: '36%', left: '30%' }, { pos: 'RCAM', top: '36%', left: '70%' }, { pos: 'CM', top: '52%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-3-1 (Szeroko)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LM', top: '30%', left: '18%' }, { pos: 'CAM', top: '30%', left: '50%' }, { pos: 'RM', top: '30%', left: '82%' },
+                { pos: 'LCDM', top: '52%', left: '35%' }, { pos: 'RCDM', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-3-1 (Wąsko)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LAM', top: '28%', left: '24%' }, { pos: 'CAM', top: '30%', left: '50%' }, { pos: 'RAM', top: '28%', left: '76%' },
+                { pos: 'LCDM', top: '52%', left: '35%' }, { pos: 'RCDM', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-4-2 (Klasyczna)': [
+                { pos: 'ST1', top: '16%', left: '35%' }, { pos: 'ST2', top: '16%', left: '65%' },
+                { pos: 'LM', top: '42%', left: '15%' }, { pos: 'CM1', top: '46%', left: '38%' }, { pos: 'CM2', top: '46%', left: '62%' }, { pos: 'RM', top: '42%', left: '85%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-4-2 (Defensywna)': [
+                { pos: 'ST1', top: '16%', left: '35%' }, { pos: 'ST2', top: '16%', left: '65%' },
+                { pos: 'LM', top: '40%', left: '15%' }, { pos: 'CDM1', top: '52%', left: '38%' }, { pos: 'CDM2', top: '52%', left: '62%' }, { pos: 'RM', top: '40%', left: '85%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-1-2-1-2 (Diament Wąsko)': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '30%', left: '50%' },
+                { pos: 'LCM', top: '46%', left: '30%' }, { pos: 'RCM', top: '46%', left: '70%' },
+                { pos: 'CDM', top: '58%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-1-2-1-2 (Szeroko)': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '30%', left: '50%' },
+                { pos: 'LM', top: '42%', left: '15%' }, { pos: 'RM', top: '42%', left: '85%' },
+                { pos: 'CDM', top: '56%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-1-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '30%', left: '50%' },
+                { pos: 'LCM', top: '48%', left: '26%' }, { pos: 'CM', top: '52%', left: '50%' }, { pos: 'RCM', top: '48%', left: '74%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-3-2-1': [
+                { pos: 'LF', top: '20%', left: '28%' }, { pos: 'ST', top: '14%', left: '50%' }, { pos: 'RF', top: '20%', left: '72%' },
+                { pos: 'LCM', top: '46%', left: '28%' }, { pos: 'CM', top: '50%', left: '50%' }, { pos: 'RCM', top: '46%', left: '72%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-2-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'LCAM', top: '32%', left: '22%' }, { pos: 'RCAM', top: '32%', left: '78%' },
+                { pos: 'LCDM', top: '52%', left: '35%' }, { pos: 'RCDM', top: '52%', left: '65%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-1-4-1': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LM', top: '32%', left: '15%' }, { pos: 'LCM', top: '36%', left: '38%' }, { pos: 'RCM', top: '36%', left: '62%' }, { pos: 'RM', top: '32%', left: '85%' },
+                { pos: 'CDM', top: '54%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-5-1 (Szeroko)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LM', top: '35%', left: '15%' }, { pos: 'LCAM', top: '32%', left: '35%' }, { pos: 'RCAM', top: '32%', left: '65%' }, { pos: 'RM', top: '35%', left: '85%' },
+                { pos: 'CM', top: '52%', left: '50%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-5-1 (2) (Solidna)': [
+                { pos: 'ST', top: '14%', left: '50%' },
+                { pos: 'LM', top: '42%', left: '15%' }, { pos: 'LCM', top: '44%', left: '35%' }, { pos: 'CM', top: '48%', left: '50%' }, { pos: 'RCM', top: '44%', left: '65%' }, { pos: 'RM', top: '42%', left: '85%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '4-2-4': [
+                { pos: 'LW', top: '20%', left: '18%' }, { pos: 'ST1', top: '16%', left: '38%' }, { pos: 'ST2', top: '16%', left: '62%' }, { pos: 'RW', top: '20%', left: '82%' },
+                { pos: 'LCM', top: '48%', left: '36%' }, { pos: 'RCM', top: '48%', left: '64%' },
+                { pos: 'LB', top: '72%', left: '15%' }, { pos: 'CB1', top: '75%', left: '38%' }, { pos: 'CB2', top: '75%', left: '62%' }, { pos: 'RB', top: '72%', left: '85%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-5-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '32%', left: '50%' },
+                { pos: 'LM', top: '45%', left: '12%' }, { pos: 'CDM1', top: '50%', left: '36%' }, { pos: 'CDM2', top: '50%', left: '64%' }, { pos: 'RM', top: '45%', left: '88%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-4-3': [
+                { pos: 'LW', top: '20%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '20%', left: '82%' },
+                { pos: 'LM', top: '44%', left: '15%' }, { pos: 'CM1', top: '48%', left: '38%' }, { pos: 'CM2', top: '48%', left: '62%' }, { pos: 'RM', top: '44%', left: '85%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-4-1-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '32%', left: '50%' },
+                { pos: 'LM', top: '46%', left: '15%' }, { pos: 'CM1', top: '50%', left: '38%' }, { pos: 'CM2', top: '50%', left: '62%' }, { pos: 'RM', top: '46%', left: '85%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-4-2-1': [
+                { pos: 'LF', top: '22%', left: '28%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RF', top: '22%', left: '72%' },
+                { pos: 'LM', top: '46%', left: '15%' }, { pos: 'CM1', top: '50%', left: '38%' }, { pos: 'CM2', top: '50%', left: '62%' }, { pos: 'RM', top: '46%', left: '85%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '3-1-4-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'LM', top: '38%', left: '15%' }, { pos: 'LCM', top: '42%', left: '38%' }, { pos: 'RCM', top: '42%', left: '62%' }, { pos: 'RM', top: '38%', left: '85%' },
+                { pos: 'CDM', top: '56%', left: '50%' },
+                { pos: 'CB1', top: '73%', left: '25%' }, { pos: 'CB2', top: '76%', left: '50%' }, { pos: 'CB3', top: '73%', left: '75%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-3-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'LCM', top: '42%', left: '28%' }, { pos: 'CM', top: '46%', left: '50%' }, { pos: 'RCM', top: '42%', left: '72%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-2-1-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'CAM', top: '32%', left: '50%' },
+                { pos: 'LCM', top: '48%', left: '36%' }, { pos: 'RCM', top: '48%', left: '64%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-2-3': [
+                { pos: 'LW', top: '20%', left: '18%' }, { pos: 'ST', top: '15%', left: '50%' }, { pos: 'RW', top: '20%', left: '82%' },
+                { pos: 'LCM', top: '46%', left: '36%' }, { pos: 'RCM', top: '46%', left: '64%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-4-1 (Mur)': [
+                { pos: 'ST', top: '15%', left: '50%' },
+                { pos: 'LM', top: '38%', left: '15%' }, { pos: 'LCM', top: '44%', left: '38%' }, { pos: 'RCM', top: '44%', left: '62%' }, { pos: 'RM', top: '38%', left: '85%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ],
+            '5-1-2-2': [
+                { pos: 'ST1', top: '15%', left: '35%' }, { pos: 'ST2', top: '15%', left: '65%' },
+                { pos: 'LCM', top: '38%', left: '32%' }, { pos: 'RCM', top: '38%', left: '68%' },
+                { pos: 'CDM', top: '54%', left: '50%' },
+                { pos: 'LWB', top: '65%', left: '12%' }, { pos: 'CB1', top: '74%', left: '30%' }, { pos: 'CB2', top: '77%', left: '50%' }, { pos: 'CB3', top: '74%', left: '70%' }, { pos: 'RWB', top: '65%', left: '88%' },
+                { pos: 'GK', top: '90%', left: '50%' }
+            ]
+        };
+
+        const BENCH_POSITIONS = ['SUB 1', 'SUB 2', 'SUB 3', 'SUB 4', 'SUB 5', 'SUB 6', 'SUB 7'];
+
+        function App() {
+            const [tab, setTab] = React.useState('squad');
+            const [matches, setMatches] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_matches')) || []);
+            const [rivals, setRivals] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_rivals')) || { division: 10, wins: 0, losses: 0, draws: 0 });
+            const [fut, setFut] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_fut')) || { wins: 0, losses: 0 });
+            
+            const [formation, setFormation] = React.useState(() => localStorage.getItem('eafc27_formation') || '4-3-3 (1)');
+            const [squad, setSquad] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_squad')) || {});
+            const [bench, setBench] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_bench')) || {});
+            const [players, setPlayers] = React.useState(() => JSON.parse(localStorage.getItem('eafc27_players')) || []);
+
+            const [selectedPos, setSelectedPos] = React.useState(null);
+            const [isBenchSelection, setIsBenchSelection] = React.useState(false);
+            const [playerName, setPlayerName] = React.useState('');
+            const [playerOvr, setPlayerOvr] = React.useState('');
+            const [playerCardType, setPlayerCardType] = React.useState('Złota');
+            const [playerPhoto, setPlayerPhoto] = React.useState('');
+
+            // Formularz meczu
+            const [gfGoals, setGfGoals] = React.useState('');
+            const [gaGoals, setGaGoals] = React.useState('');
+            const [matchScorers, setMatchScorers] = React.useState([]);
+            const [currentScorer, setCurrentScorer] = React.useState('');
+            const [currentMinute, setCurrentMinute] = React.useState('');
+            const [redCard, setRedCard] = React.useState(false);
+            const [penaltyFor, setPenaltyFor] = React.useState('none');
+
+            const getAllSquadPlayers = () => {
+                const list = [];
+                Object.values(squad).forEach(p => { if (p && p.name) list.push(p.name); });
+                Object.values(bench).forEach(p => { if (p && p.name) list.push(p.name); });
+                return list;
+            };
+
+            React.useEffect(() => {
+                localStorage.setItem('eafc27_matches', JSON.stringify(matches));
+                localStorage.setItem('eafc27_rivals', JSON.stringify(rivals));
+                localStorage.setItem('eafc27_fut', JSON.stringify(fut));
+                localStorage.setItem('eafc27_formation', formation);
+                localStorage.setItem('eafc27_squad', JSON.stringify(squad));
+                localStorage.setItem('eafc27_bench', JSON.stringify(bench));
+                localStorage.setItem('eafc27_players', JSON.stringify(players));
+            }, [matches, rivals, fut, formation, squad, bench, players]);
+
+            const openPositionModal = (pos, isBench) => {
+                setSelectedPos(pos);
+                setIsBenchSelection(isBench);
+                const currentData = isBench ? bench[pos] : squad[pos];
+                if (currentData) {
+                    setPlayerName(currentData.name);
+                    setPlayerOvr(currentData.ovr);
+                    setPlayerCardType(currentData.cardType || 'Złota');
+                    setPlayerPhoto(currentData.photo || '');
+                } else {
+                    setPlayerName('');
+                    setPlayerOvr('');
+                    setPlayerCardType('Złota');
+                    setPlayerPhoto('');
+                }
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setPlayerPhoto(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const addScorerToList = () => {
+                const maxAllowed = parseInt(gfGoals) || 0;
+                if (!currentScorer || matchScorers.length >= maxAllowed) return;
+                setMatchScorers([...matchScorers, { name: currentScorer, minute: currentMinute || '?' }]);
+                setCurrentScorer('');
+                setCurrentMinute('');
+            };
+
+            const removeScorerFromList = (index) => {
+                setMatchScorers(matchScorers.filter((_, i) => i !== index));
+            };
+
+            const addMatch = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const mode = form.mode.value;
+                const gf = parseInt(gfGoals);
+                const ga = parseInt(gaGoals);
+                const result = gf > ga ? 'W' : gf < ga ? 'L' : 'D';
+
+                const match = {
+                    id: Date.now(),
+                    mode,
+                    opponent: form.opponent.value,
+                    gf,
+                    ga,
+                    result,
+                    scorers: matchScorers,
+                    redCard,
+                    penaltyFor
+                };
+
+                setMatches([match, ...matches]);
+
+                if (mode === 'Division Rivals') {
+                    setRivals(prev => ({
+                        ...prev,
+                        wins: prev.wins + (result === 'W' ? 1 : 0),
+                        draws: prev.draws + (result === 'D' ? 1 : 0),
+                        losses: prev.losses + (result === 'L' ? 1 : 0)
+                    }));
+                } else if (mode === 'FUT Champions') {
+                    setFut(prev => ({
+                        ...prev,
+                        wins: prev.wins + (result === 'W' ? 1 : 0),
+                        losses: prev.losses + (result === 'L' ? 1 : 0)
+                    }));
+                }
+
+                setGfGoals('');
+                setGaGoals('');
+                setMatchScorers([]);
+                setRedCard(false);
+                setPenaltyFor('none');
+                form.reset();
+            };
+
+            const deleteMatch = (id) => {
+                const matchToDelete = matches.find(m => m.id === id);
+                if (!matchToDelete) return;
+
+                if (matchToDelete.mode === 'Division Rivals') {
+                    setRivals(prev => ({
+                        ...prev,
+                        wins: Math.max(0, prev.wins - (matchToDelete.result === 'W' ? 1 : 0)),
+                        draws: Math.max(0, prev.draws - (matchToDelete.result === 'D' ? 1 : 0)),
+                        losses: Math.max(0, prev.losses - (matchToDelete.result === 'L' ? 1 : 0))
+                    }));
+                } else if (matchToDelete.mode === 'FUT Champions') {
+                    setFut(prev => ({
+                        ...prev,
+                        wins: Math.max(0, prev.wins - (matchToDelete.result === 'W' ? 1 : 0)),
+                        losses: Math.max(0, prev.losses - (matchToDelete.result === 'L' ? 1 : 0))
+                    }));
+                }
+
+                setMatches(matches.filter(m => m.id !== id));
+            };
+
+            const assignPlayer = (e) => {
+                e.preventDefault();
+                if (!selectedPos) return;
+
+                // Automatyczna zamiana nazwiska na wielkie litery
+                const upperName = playerName.trim().toUpperCase();
+
+                const playerData = { 
+                    name: upperName, 
+                    ovr: playerOvr || '80', 
+                    cardType: playerCardType.trim(), 
+                    photo: playerPhoto 
+                };
+
+                if (isBenchSelection) {
+                    setBench({ ...bench, [selectedPos]: playerData });
+                } else {
+                    setSquad({ ...squad, [selectedPos]: playerData });
+                }
+                
+                setSelectedPos(null);
+            };
+
+            const removePlayer = (pos, isBench) => {
+                if (isBench) {
+                    const newBench = { ...bench };
+                    delete newBench[pos];
+                    setBench(newBench);
+                } else {
+                    const newSquad = { ...squad };
+                    delete newSquad[pos];
+                    setSquad(newSquad);
+                }
+                setSelectedPos(null);
+            };
+
+            const addCustomPlayer = (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const upperName = form.pname.value.trim().toUpperCase();
+
+                const player = {
+                    id: Date.now(),
+                    name: upperName,
+                    pos: form.ppos.value.toUpperCase(),
+                    ovr: form.povr.value,
+                    cardType: form.pcard.value.trim(),
+                    matches: form.pmatches.value || 0,
+                    goals: form.pgoals.value || 0,
+                    assists: form.passists.value || 0
+                };
+                setPlayers([player, ...players]);
+                form.reset();
+            };
+
+            const removeCustomPlayer = (id) => {
+                setPlayers(players.filter(p => p.id !== id));
+            };
+
+            const squadPlayersList = getAllSquadPlayers();
+
+            return (
+                <div className="max-w-md mx-auto p-3 pb-20">
+                    <header className="text-center my-4">
+                        <h1 className="text-2xl font-black text-emerald-400 tracking-wider">EA FC 27 TRACKER</h1>
+                        <p className="text-[11px] text-slate-400">Twoje Mobilne Centrum Ultimate Team</p>
+                    </header>
+
+                    <div className="grid grid-cols-5 gap-1 bg-slate-900 p-1 rounded-xl mb-4 border border-slate-800 text-center text-[10px]">
+                        <button onClick={() => setTab('squad')} className={`py-2 font-bold rounded-lg transition ${tab === 'squad' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>Boisko</button>
+                        <button onClick={() => setTab('players')} className={`py-2 font-bold rounded-lg transition ${tab === 'players' ? 'bg-amber-400 text-slate-950' : 'text-slate-400'}`}>Zawodnicy</button>
+                        <button onClick={() => setTab('matches')} className={`py-2 font-bold rounded-lg transition ${tab === 'matches' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>Mecze</button>
+                        <button onClick={() => setTab('rivals')} className={`py-2 font-bold rounded-lg transition ${tab === 'rivals' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>Rivals</button>
+                        <button onClick={() => setTab('fut')} className={`py-2 font-bold rounded-lg transition ${tab === 'fut' ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`}>FUT</button>
+                    </div>
+
+                    {tab === 'squad' && (
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
+                                <span className="text-xs font-bold text-slate-300">Formacja:</span>
+                                <select value={formation} onChange={e => setFormation(e.target.value)} className="bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs font-bold text-emerald-400 max-w-[200px]">
+                                    {Object.keys(FORMATIONS).map(f => (
+                                        <option key={f} value={f}>{f}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="relative pitch-bg h-[450px] rounded-2xl border-2 border-emerald-600/40 shadow-2xl overflow-hidden my-2">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-20 border-b-2 border-x-2 border-white/20"></div>
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-24 border-t-2 border-x-2 border-white/20"></div>
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 border-2 border-white/20 rounded-full"></div>
+
+                                {FORMATIONS[formation] && FORMATIONS[formation].map((item, idx) => {
+                                    const pData = squad[item.pos];
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            style={{ top: item.top, left: item.left }}
+                                            onClick={() => openPositionModal(item.pos, false)}
+                                            className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer text-center group z-10"
+                                        >
+                                            <div className="w-12 h-15 rounded-lg border-2 flex flex-col items-center justify-center shadow-lg transition transform group-active:scale-95 overflow-hidden bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 text-slate-950 border-amber-200">
+                                                {pData ? (
+                                                    pData.photo ? (
+                                                        <div className="w-full h-full relative flex items-center justify-center">
+                                                            <img src={pData.photo} alt={pData.name} className="absolute inset-0 w-full h-full object-cover" />
+                                                            <div className="absolute bottom-0 inset-x-0 bg-slate-950/70 text-[8px] font-black text-center text-amber-300 leading-tight py-0.5">
+                                                                {pData.ovr} {pData.name.substring(0, 5)}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-[10px] font-black leading-none">{pData.ovr}</span>
+                                                            <span className="text-[9px] font-extrabold uppercase leading-tight truncate px-0.5">{pData.name.substring(0, 6)}</span>
+                                                        </>
+                                                    )
+                                                ) : (
+                                                    <span className="text-[10px] font-bold text-emerald-400 bg-slate-950/80 w-full h-full flex items-center justify-center">+</span>
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] font-black bg-slate-950/90 text-slate-200 px-1 py-0.5 rounded shadow mt-0.5 block border border-slate-800">
+                                                {item.pos}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="bg-slate-900 border border-slate-800 p-3 rounded-2xl shadow-xl">
+                                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide mb-2 flex items-center justify-between">
+                                    <span>Ławka Rezerwowych</span>
+                                    <span className="text-[10px] text-slate-500 font-normal">7 zawodników</span>
+                                </h3>
+                                <div className="flex gap-2 overflow-x-auto pb-1">
+                                    {BENCH_POSITIONS.map((bPos, idx) => {
+                                        const bData = bench[bPos];
+                                        return (
+                                            <div 
+                                                key={idx} 
+                                                onClick={() => openPositionModal(bPos, true)}
+                                                className="flex-shrink-0 text-center cursor-pointer"
+                                            >
+                                                <div className="w-11 h-14 rounded-lg border-2 flex flex-col items-center justify-center shadow transition overflow-hidden bg-gradient-to-b from-amber-100 via-amber-300 to-amber-600 text-slate-950 border-amber-200">
+                                                    {bData ? (
+                                                        bData.photo ? (
+                                                            <div className="w-full h-full relative flex items-center justify-center">
+                                                                <img src={bData.photo} alt={bData.name} className="absolute inset-0 w-full h-full object-cover" />
+                                                                <div className="absolute bottom-0 inset-x-0 bg-slate-950/70 text-[7px] font-black text-center text-amber-300 leading-tight">
+                                                                    {bData.ovr}
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                <span className="text-[10px] font-black leading-none">{bData.ovr}</span>
+                                                                <span className="text-[9px] font-extrabold uppercase leading-tight truncate px-0.5">{bData.name.substring(0, 5)}</span>
+                                                            </>
+                                                        )
+                                                    ) : (
+                                                        <span className="text-[10px] font-bold text-slate-400 bg-slate-950 w-full h-full flex items-center justify-center">+</span>
+                                                    )}
+                                                </div>
+                                                <span className="text-[8px] text-slate-400 mt-1 block uppercase font-bold">{bPos}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {selectedPos && (
+                                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                                    <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl w-full max-w-xs space-y-4 shadow-2xl">
+                                        <h3 className="text-sm font-bold text-slate-200 text-center uppercase">
+                                            {isBenchSelection ? 'Ławka:' : 'Pozycja:'} <span className="text-emerald-400">{selectedPos}</span>
+                                        </h3>
+                                        <form onSubmit={assignPlayer} className="space-y-3">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Nazwisko (np. MBAPPE)" 
+                                                required 
+                                                value={playerName} 
+                                                onChange={e => setPlayerName(e.target.value)}
+                                                className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-xs text-slate-200 uppercase font-bold"
+                                            />
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <input 
+                                                    type="number" 
+                                                    placeholder="OVR (np. 91)" 
+                                                    min="40" 
+                                                    max="99" 
+                                                    value={playerOvr} 
+                                                    onChange={e => setPlayerOvr(e.target.value)}
+                                                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-xs text-slate-200 font-bold"
+                                                />
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Rodzaj karty (np. TOTY)" 
+                                                    value={playerCardType} 
+                                                    onChange={e => setPlayerCardType(e.target.value)}
+                                                    className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-xs text-amber-300 font-bold"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] text-slate-400 block mb-1">Zdjęcie zawodnika z galerii:</label>
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    onChange={handleImageUpload}
+                                                    className="w-full bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-300 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-500 file:text-slate-950"
+                                                />
+                                            </div>
+                                            <div className="flex gap-2 pt-1">
+                                                <button type="submit" className="flex-1 bg-emerald-500 text-slate-950 font-bold py-2 rounded-xl text-xs">Zapisz / Zmień</button>
+                                                {(isBenchSelection ? bench[selectedPos] : squad[selectedPos]) && (
+                                                    <button type="button" onClick={() => removePlayer(selectedPos, isBenchSelection)} className="bg-rose-500/20 text-rose-400 font-bold px-3 py-2 rounded-xl text-xs">Usuń</button>
+                                                )}
+                                                <button type="button" onClick={() => setSelectedPos(null)} className="bg-slate-800 text-slate-400 font-bold px-3 py-2 rounded-xl text-xs">Anuluj</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {tab === 'players' && (
+                        <div className="space-y-4">
+                            <form onSubmit={addCustomPlayer} className="bg-slate-900 border border-amber-500/30 p-4 rounded-2xl shadow-xl space-y-3">
+                                <h2 className="text-sm font-bold text-amber-400 uppercase tracking-wide">Dodaj Wyróżnionego Zawodnika ⭐</h2>
+                                <input type="text" name="pname" placeholder="Nazwisko (np. CRISTIANO RONALDO)" required className="w-full bg-slate-950 border border-slate-800 p-2.5 rounded-xl text-xs text-slate-200 uppercase font-bold" />
+                                
+                                <div className="grid grid-cols-3 gap-2">
+                                    <input type="text" name="ppos" placeholder="Pozycja (ST)" required className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200 uppercase font-bold" />
+                                    <input type="number" name="povr" placeholder="OVR" min="40" max="99" required className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200 font-bold" />
+                                    <input type="text" name="pcard" placeholder="Rodzaj karty (np. POTW)" required className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-amber-400 font-bold" />
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2">
+                                    <input type="number" name="pmatches" placeholder="Mecze" min="0" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                    <input type="number" name="pgoals" placeholder="Gole" min="0" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                    <input type="number" name="passists" placeholder="Asysty" min="0" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                </div>
+
+                                <button type="submit" className="w-full bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider hover:bg-amber-300 transition">Zapisz Zawodnika</button>
+                            </form>
+
+                            <div className="space-y-2">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Twoi Wyróżnieni Zawodnicy</h2>
+                                {players.length === 0 ? (
+                                    <p className="text-xs text-slate-500 text-center py-6">Brak dodanych zawodników.</p>
+                                ) : (
+                                    players.map(p => (
+                                        <div key={p.id} className="bg-gradient-to-r from-slate-900 to-slate-950 border border-amber-500/40 p-3 rounded-xl flex justify-between items-center shadow-lg">
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-10 h-12 bg-gradient-to-b from-amber-300 to-amber-600 text-slate-950 rounded-lg flex flex-col items-center justify-center border border-amber-200 shadow">
+                                                    <span className="text-xs font-black leading-none">{p.ovr}</span>
+                                                    <span className="text-[8px] font-extrabold uppercase">{p.pos}</span>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1 uppercase">
+                                                        {p.name}
+                                                        <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-bold">{p.cardType}</span>
+                                                    </h4>
+                                                    <span className="text-[10px] text-slate-400 block mt-0.5">Mecze: <strong className="text-slate-200">{p.matches}</strong></span>
+                                                </div>
+                                            </div>
+                                            <div className="text-right flex items-center gap-3">
+                                                <div>
+                                                    <span className="text-xs font-black text-emerald-400 block">{p.goals} G</span>
+                                                    <span className="text-[10px] text-amber-400 block">{p.assists} A</span>
+                                                </div>
+                                                <button onClick={() => removeCustomPlayer(p.id)} className="text-rose-500/60 hover:text-rose-400 text-xs font-bold px-1">✕</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'matches' && (
+                        <div>
+                            <form onSubmit={addMatch} className="bg-slate-900 border border-slate-800 p-4 rounded-2xl mb-6 shadow-xl space-y-3">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Dodaj Wynik Meczu</h2>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <select name="mode" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200 font-bold text-emerald-400">
+                                        <option value="Division Rivals">Division Rivals</option>
+                                        <option value="FUT Champions">FUT Champions</option>
+                                        <option value="Draft">Draft</option>
+                                        <option value="Towarzyski">Towarzyski</option>
+                                    </select>
+                                    <input type="text" name="opponent" placeholder="Rywal (opcjonalnie)" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <input type="number" value={gfGoals} onChange={e => { setGfGoals(e.target.value); setMatchScorers([]); }} placeholder="Twoje gole" required min="0" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                    <input type="number" value={gaGoals} onChange={e => setGaGoals(e.target.value)} placeholder="Gole rywala" required min="0" className="bg-slate-950 border border-slate-800 p-2 rounded-xl text-xs text-slate-200" />
+                                </div>
+
+                                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                                    <span className="text-[11px] text-slate-400 block font-bold">
+                                        Strzelcy bramek ({matchScorers.length} / {gfGoals || 0}):
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <select value={currentScorer} onChange={e => setCurrentScorer(e.target.value)} className="flex-1 bg-slate-900 border border-slate-800 p-1.5 rounded-lg text-xs text-slate-300 uppercase">
+                                            <option value="">Wybierz strzelca</option>
+                                            {squadPlayersList.map((pName, i) => (
+                                                <option key={i} value={pName}>{pName}</option>
+                                            ))}
+                                        </select>
+                                        <input type="text" placeholder="Min. (np. 45')" value={currentMinute} onChange={e => setCurrentMinute(e.target.value)} className="w-24 bg-slate-900 border border-slate-800 p-1.5 rounded-lg text-xs text-slate-200" />
+                                        <button 
+                                            type="button" 
+                                            onClick={addScorerToList} 
+                                            disabled={!gfGoals || matchScorers.length >= parseInt(gfGoals)} 
+                                            className="bg-emerald-500 disabled:opacity-40 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-xs"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    {matchScorers.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 pt-1">
+                                            {matchScorers.map((s, idx) => (
+                                                <span key={idx} className="bg-slate-900 text-emerald-300 text-[10px] px-2 py-1 rounded-lg border border-slate-800 flex items-center gap-1 uppercase">
+                                                    ⚽ {s.name} ({s.minute})
+                                                    <button type="button" onClick={() => removeScorerFromList(idx)} className="text-rose-400 font-bold ml-1">✕</button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
+                                    <label className="flex items-center gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800 cursor-pointer">
+                                        <input type="checkbox" checked={redCard} onChange={e => setRedCard(e.target.checked)} className="w-4 h-4 accent-rose-500 rounded" />
+                                        <span className="text-slate-300">Czerwona kartka 🟥</span>
+                                    </label>
+                                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800 flex flex-col justify-center">
+                                        <span className="text-[10px] text-slate-400 block mb-0.5">Rzut karny ⚽:</span>
+                                        <select value={penaltyFor} onChange={e => setPenaltyFor(e.target.value)} className="bg-slate-900 border border-slate-800 rounded text-xs text-amber-300 p-1">
+                                            <option value="none">Brak karnego</option>
+                                            <option value="me">Dla Mnie</option>
+                                            <option value="opponent">Dla Przeciwnika</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="w-full bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider hover:bg-emerald-400 transition">Zapisz Mecz</button>
+                            </form>
+
+                            <div className="space-y-2">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Ostatnie Mecze</h2>
+                                {matches.length === 0 ? (
+                                    <p className="text-xs text-slate-500 text-center py-6">Brak rozegranych meczów w historii.</p>
+                                ) : (
+                                    matches.map(m => (
+                                        <div key={m.id} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center">
+                                            <div>
+                                                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">{m.mode}</span>
+                                                <span className="text-xs text-slate-300">{m.opponent || 'Przeciwnik Online'}</span>
+                                                <div className="text-[10px] text-slate-400 mt-1 flex flex-wrap gap-1 items-center">
+                                                    {m.scorers && m.scorers.map((sc, i) => (
+                                                        <span key={i} className="bg-slate-950 px-1.5 py-0.5 rounded text-emerald-300 uppercase">⚽ {sc.name} ({sc.minute})</span>
+                                                    ))}
+                                                    {m.penalty === 'me' && <span className="bg-amber-500/10 text-amber-400 px-1 py-0.5 rounded">Karny (Ja)</span>}
+                                                    {m.penalty === 'opponent' && <span className="bg-rose-500/10 text-rose-400 px-1 py-0.5 rounded">Karny (Rywal)</span>}
+                                                    {m.redCard && <span className="bg-rose-500/10 text-rose-400 px-1 py-0.5 rounded">Czerwona kartka</span>}
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-sm font-black px-2 py-0.5 rounded-lg ${m.result === 'W' ? 'bg-emerald-500/20 text-emerald-400' : m.result === 'L' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                    {m.gf} : {m.ga}
+                                                </span>
+                                                <button onClick={() => deleteMatch(m.id)} className="text-rose-500 hover:text-rose-400 font-black text-xs px-2 py-1 bg-rose-500/10 rounded-lg">✕</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'rivals' && (
+                        <div className="space-y-4">
+                            <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl space-y-4">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Division Rivals</h2>
+                                <div>
+                                    <label className="text-xs text-slate-400 block mb-1">Wybierz Dywizję:</label>
+                                    <select value={rivals.division} onChange={e => setRivals({...rivals, division: e.target.value})} className="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl text-sm text-slate-200 font-bold">
+                                        {[...Array(10)].map((_, i) => (
+                                            <option key={10 - i} value={10 - i}>Dywizja {10 - i}</option>
+                                        ))}
+                                        <option value="Elite">Elite Division</option>
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800"><span className="block text-xl font-black text-emerald-400">{rivals.wins}</span><span className="text-[10px] text-slate-400 uppercase">Wygrane</span></div>
+                                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800"><span className="block text-xl font-black text-amber-400">{rivals.draws}</span><span className="text-[10px] text-slate-400 uppercase">Remisy</span></div>
+                                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800"><span className="block text-xl font-black text-rose-400">{rivals.losses}</span><span className="text-[10px] text-slate-400 uppercase">Porażki</span></div>
+                                </div>
+
+                                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                                    <span className="text-xs text-slate-400 uppercase block mb-1">Twój poziom</span>
+                                    <span className="text-2xl font-black text-emerald-400">Dywizja {rivals.division}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Mecze Division Rivals</h2>
+                                {matches.filter(m => m.mode === 'Division Rivals').length === 0 ? (
+                                    <p className="text-xs text-slate-500 text-center py-4">Brak rozegranych meczów Rivals.</p>
+                                ) : (
+                                    matches.filter(m => m.mode === 'Division Rivals').map(m => (
+                                        <div key={m.id} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center">
+                                            <div>
+                                                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">{m.mode}</span>
+                                                <span className="text-xs text-slate-300">{m.opponent || 'Przeciwnik Online'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-sm font-black px-2 py-0.5 rounded-lg ${m.result === 'W' ? 'bg-emerald-500/20 text-emerald-400' : m.result === 'L' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                    {m.gf} : {m.ga}
+                                                </span>
+                                                <button onClick={() => deleteMatch(m.id)} className="text-rose-500 hover:text-rose-400 font-black text-xs px-2 py-1 bg-rose-500/10 rounded-lg">✕</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {tab === 'fut' && (
+                        <div className="space-y-4">
+                            <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl space-y-4">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Finały FUT Champions</h2>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                        <label className="text-xs text-slate-400 block mb-1">Wygrane:</label>
+                                        <input type="number" min="0" max="20" value={fut.wins} onChange={e => setFut({...fut, wins: Number(e.target.value)})} className="w-full bg-slate-900 border border-slate-800 p-2 rounded-xl text-sm text-slate-200 font-bold text-center" />
+                                    </div>
+                                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                        <label className="text-xs text-slate-400 block mb-1">Porażki:</label>
+                                        <input type="number" min="0" max="20" value={fut.losses} onChange={e => setFut({...fut, losses: Number(e.target.value)})} className="w-full bg-slate-900 border border-slate-800 p-2 rounded-xl text-sm text-slate-200 font-bold text-center" />
+                                    </div>
+                                </div>
+                                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                                    <span className="text-xs text-slate-400 uppercase block mb-1">Bilans Finałów</span>
+                                    <span className="text-2xl font-black text-emerald-400">{fut.wins} - {fut.losses}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h2 className="text-sm font-bold text-slate-300 uppercase tracking-wide">Mecze FUT Champions</h2>
+                                {matches.filter(m => m.mode === 'FUT Champions').length === 0 ? (
+                                    <p className="text-xs text-slate-500 text-center py-4">Brak rozegranych meczów FUT Champions.</p>
+                                ) : (
+                                    matches.filter(m => m.mode === 'FUT Champions').map(m => (
+                                        <div key={m.id} className="bg-slate-900 border border-slate-800 p-3 rounded-xl flex justify-between items-center">
+                                            <div>
+                                                <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">{m.mode}</span>
+                                                <span className="text-xs text-slate-300">{m.opponent || 'Przeciwnik Online'}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className={`text-sm font-black px-2 py-0.5 rounded-lg ${m.result === 'W' ? 'bg-emerald-500/20 text-emerald-400' : m.result === 'L' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                    {m.gf} : {m.ga}
+                                                </span>
+                                                <button onClick={() => deleteMatch(m.id)} className="text-rose-500 hover:text-rose-400 font-black text-xs px-2 py-1 bg-rose-500/10 rounded-lg">✕</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
